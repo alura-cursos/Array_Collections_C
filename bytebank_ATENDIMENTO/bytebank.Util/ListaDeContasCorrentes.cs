@@ -19,17 +19,15 @@ namespace bytebank_ATENDIMENTO.bytebank.Util
         public void Adicionar(ContaCorrente item)
         {
             Console.WriteLine($"Adicionando item na posição {_proximaPosicao}");
+            _itens.SetValue(item, _proximaPosicao);
             VerificarCapacidade(_proximaPosicao + 1);
-            _itens[_proximaPosicao] = item;
             _proximaPosicao++;
         }
 
         private void VerificarCapacidade(int tamanhoNecessario)
         {
-            if (_itens.Length>= tamanhoNecessario)
-            {
-                return;
-            }
+            if (tamanhoNecessario <= _itens.Length) return;
+
             Console.WriteLine("Aumentando a capacidade da lista!");
             ContaCorrente[] novoArray = new ContaCorrente[tamanhoNecessario];
 
@@ -37,24 +35,23 @@ namespace bytebank_ATENDIMENTO.bytebank.Util
             {
                 novoArray[i] = _itens[i];
             }
+
             _itens = novoArray;
         }
 
-        public void Remover( ContaCorrente conta)
+        public void Remover(ContaCorrente conta)
         {
-            int indiceItem = -1;
+            var index = -1;
             for (int i = 0; i < _proximaPosicao; i++)
             {
-                ContaCorrente contaAtual = _itens[i];
-                if (contaAtual == conta)
+                if (_itens[i] == conta)
                 {
-                    indiceItem = i;
+                    index = i;
                     break;
                 }
             }
-            // 0         1       2
-            //[conta1][conta2][conta4][conta5][null]
-            for (int i = indiceItem; i < _proximaPosicao-1; i++)
+
+            for (int i = index; i < _proximaPosicao - 1; i++)
             {
                 _itens[i] = _itens[i + 1];
             }
@@ -64,21 +61,18 @@ namespace bytebank_ATENDIMENTO.bytebank.Util
 
         public void ExibeLista()
         {
-            for (int i = 0; i < _itens.Length; i++)
+            for (int i = 0; i < _proximaPosicao; i++)
             {
-                if (_itens[i] != null)
-                {
-                    var conta = _itens[i];
-                    Console.WriteLine($" Indice[{i}] = " +
-                        $"Conta:{conta.Conta} - " +
-                        $"N° da Agência: {conta.Numero_agencia}");
-                }
+                var conta = _itens[i];
+                Console.WriteLine($"Indice[{i}] = " +
+                    $"Conta:{conta.Conta} - " +
+                    $"N° da Agência: {conta.Numero_agencia}");
             }
         }
 
         public ContaCorrente RecuperarContaNoIndice(int indice)
         {
-            if (indice<0 || indice >=_proximaPosicao)
+            if (indice < 0 || indice >= _proximaPosicao)
             {
                 throw new ArgumentOutOfRangeException(nameof(indice));
             }
